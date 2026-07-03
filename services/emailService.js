@@ -21,6 +21,9 @@ const sendOtpEmail = async ({ to, name, otp, purpose, expiryMinutes = env.OTP_EX
       subject,
       html,
     });
+
+    console.log("Mail Sent:", info.messageId);
+    console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
   } catch (error) {
     console.error('[MAILER] Failed to send OTP email:', error.message);
     throw new AppError('Failed to send OTP email. Please try again later.', 500);

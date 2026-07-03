@@ -1,23 +1,21 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
+const env = require("./env");
 
-/**
- * Gmail SMTP transporter using an App Password.
- * Docs: https://support.google.com/mail/answer/185833
- */
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
+    user: env.GMAIL_USER,
+    pass: env.GMAIL_APP_PASSWORD,
   },
 });
 
-// Verify transporter connectivity on boot (non-blocking)
-transporter.verify((error) => {
+transporter.verify((error, success) => {
   if (error) {
-    console.error('[MAILER] SMTP configuration error:', error.message);
+    console.error("SMTP Verify Error:", error);
   } else {
-    console.log('[MAILER] SMTP server is ready to send emails');
+    console.log("SMTP mail server is Ready:", success);
   }
 });
 
