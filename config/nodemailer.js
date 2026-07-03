@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const env = require('./env');
 
 /**
  * Gmail SMTP transporter using an App Password.
@@ -8,8 +7,8 @@ const env = require('./env');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: env.GMAIL_USER,
-    pass: env.GMAIL_APP_PASSWORD,
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
   },
 });
 
