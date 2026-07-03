@@ -2,6 +2,11 @@ require("dotenv").config();
 const connectDB = require('./config/db');
 const app = require('./app');
 
+const transporter = require("./config/nodemailer");
+
+
+
+
 const startServer = async () => {
   await connectDB();
 
@@ -27,3 +32,20 @@ const startServer = async () => {
 };
 
 startServer();
+
+
+app.get("/test-mail", async (req, res) => {
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: "ramjee.node@example.com",
+      subject: "Test Email",
+      text: "Hello server is started and nodemailer is working fine.",
+    });
+
+    res.send("Email Sent");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Email Failed");
+  }
+});
