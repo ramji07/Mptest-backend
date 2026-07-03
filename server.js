@@ -1,12 +1,12 @@
-const env = require('./config/env');
+const env = require('dotenv');
 const connectDB = require('./config/db');
 const app = require('./app');
 
 const startServer = async () => {
   await connectDB();
 
-  const server = app.listen(env.PORT, () => {
-    console.log(`[SERVER] MPTest API running in ${env.NODE_ENV} mode on port ${env.PORT}`);
+  const server = app.listen(process.env.PORT, () => {
+    console.log(`[SERVER] MPTest API running in ${process.env.NODE_ENV} mode on port ${process.env.PORT}`);
   });
 
   // Gracefully handle unexpected errors instead of crashing silently
