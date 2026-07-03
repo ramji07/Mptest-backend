@@ -1,5 +1,5 @@
 const transporter = require('../config/nodemailer');
-const env = require('../config/env');
+require("dotenv").config();
 const otpEmailTemplate = require('../helpers/otpEmailTemplate');
 const AppError = require('../utils/appError');
 
@@ -8,7 +8,7 @@ const AppError = require('../utils/appError');
  * Throws an AppError if the email fails to send, so calling code
  * (controllers/services) can roll back or respond appropriately.
  */
-const sendOtpEmail = async ({ to, name, otp, purpose, expiryMinutes = env.OTP_EXPIRY_MINUTES }) => {
+const sendOtpEmail = async ({ to, name, otp, purpose, expiryMinutes = process.env.OTP_EXPIRY_MINUTES }) => {
   const subject =
     purpose === 'reset_password' ? 'MPTest - Password Reset Code' : 'MPTest - Email Verification Code';
 
@@ -16,7 +16,7 @@ const sendOtpEmail = async ({ to, name, otp, purpose, expiryMinutes = env.OTP_EX
 
   try {
     await transporter.sendMail({
-      from: `"${env.EMAIL_FROM_NAME}" <${env.GMAIL_USER}>`,
+      from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.GMAIL_USER}>`,
       to,
       subject,
       html,

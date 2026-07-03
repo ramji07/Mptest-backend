@@ -1,4 +1,4 @@
-const env = require('../config/env');
+require("dotenv").config();
 
 /**
  * Handles requests to undefined routes.
@@ -48,7 +48,7 @@ const errorHandler = (err, req, res, next) => {
     message = 'Authentication token has expired';
   }
 
-  if (env.NODE_ENV !== 'production' && statusCode === 500) {
+  if (process.env.NODE_ENV !== 'production' && statusCode === 500) {
     console.error('[ERROR]', err);
   }
 
@@ -56,7 +56,7 @@ const errorHandler = (err, req, res, next) => {
     success: false,
     message,
     data: null,
-    ...(env.NODE_ENV !== 'production' && statusCode === 500 ? { stack: err.stack } : {}),
+    ...(process.env.NODE_ENV !== 'production' && statusCode === 500 ? { stack: err.stack } : {}),
   });
 };
 

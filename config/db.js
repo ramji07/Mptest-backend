@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const env = require('./env');
+require("dotenv").config();
 
 /**
  * Connects to MongoDB using Mongoose.
@@ -9,7 +9,7 @@ const connectDB = async () => {
   try {
     mongoose.set('strictQuery', true);
 
-    const conn = await mongoose.connect(env.MONGO_URI);
+    const conn = await mongoose.connect(process.env.MONGO_URI);
 
     console.log(`[DB] MongoDB connected: ${conn.connection.host}/${conn.connection.name}`);
 

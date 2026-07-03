@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 
-const env = require('./config/env');
+require("dotenv").config();
 const routes = require('./routes');
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 const { globalLimiter } = require('./middlewares/rateLimiter');
@@ -24,7 +24,7 @@ app.use(
 
 app.use(compression());
 
-app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));

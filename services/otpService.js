@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const Otp = require('../models/Otp');
 const generateOtp = require('../utils/generateOtp');
 const { sendOtpEmail } = require('./emailService');
-const env = require('../config/env');
+require("dotenv").config();
 const AppError = require('../utils/appError');
 const { OTP_PURPOSES } = require('../constants');
 
@@ -20,7 +20,7 @@ const { OTP_PURPOSES } = require('../constants');
 const createAndSendOtp = async ({ email, purpose, name, tempSignupData, hashedPassword }) => {
   const normalizedEmail = email.toLowerCase().trim();
   const rawOtp = generateOtp();
-  const expiresAt = new Date(Date.now() + env.OTP_EXPIRY_MINUTES * 60 * 1000);
+  const expiresAt = new Date(Date.now() + process.env.OTP_EXPIRY_MINUTES * 60 * 1000);
 
   // Remove any existing OTP for this email + purpose so only one is ever active
   await Otp.deleteMany({ email: normalizedEmail, purpose });
@@ -41,7 +41,7 @@ const createAndSendOtp = async ({ email, purpose, name, tempSignupData, hashedPa
     name: name || tempSignupData?.name || 'there',
     otp: rawOtp,
     purpose,
-    expiryMinutes: env.OTP_EXPIRY_MINUTES,
+    expiryMinutes: process.env.OTP_EXPIRY_MINUTES,
   });
 
   return otpDoc;

@@ -1,12 +1,12 @@
 const rateLimit = require('express-rate-limit');
-const env = require('../config/env');
+require("dotenv").config();
 
 /**
  * General-purpose limiter applied to the whole API.
  */
 const globalLimiter = rateLimit({
-  windowMs: env.RATE_LIMIT_WINDOW_MINUTES * 60 * 1000,
-  max: env.RATE_LIMIT_MAX_REQUESTS,
+  windowMs: process.env.RATE_LIMIT_WINDOW_MINUTES * 60 * 1000,
+  max: process.env.RATE_LIMIT_MAX_REQUESTS,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -21,8 +21,8 @@ const globalLimiter = rateLimit({
  * forgot/reset password) to mitigate brute force and OTP-spam abuse.
  */
 const authLimiter = rateLimit({
-  windowMs: env.RATE_LIMIT_WINDOW_MINUTES * 60 * 1000,
-  max: env.AUTH_RATE_LIMIT_MAX_REQUESTS,
+  windowMs: process.env.RATE_LIMIT_WINDOW_MINUTES * 60 * 1000,
+  max: process.env.AUTH_RATE_LIMIT_MAX_REQUESTS,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
