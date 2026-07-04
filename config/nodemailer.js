@@ -2,14 +2,16 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  host: process.env.BREVO_HOST,
+  port: Number(process.env.BREVO_PORT),
+  secure: false,
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
+    user: process.env.BREVO_USER,
+    pass: process.env.BREVO_PASS,
   },
 });
+
+module.exports = transporter;
 
 transporter.verify((error, success) => {
   if (error) {
