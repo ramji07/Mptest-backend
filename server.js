@@ -1,10 +1,10 @@
 require("dotenv").config();
 const connectDB = require('./config/db');
-const app = require('./app');
 
 const transporter = require("./config/nodemailer");
 
-
+app.set("trust proxy", true);
+const app = require('./app');
 
 
 const startServer = async () => {
