@@ -4,8 +4,7 @@
   "description": "Production-ready backend for MPTest React Native Education App",
   "main": "src/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "nodemon server.js"
   },
   "keywords": [
     "mptest",
