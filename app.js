@@ -15,7 +15,7 @@ const { globalLimiter } = require('./middlewares/rateLimiter');
 const sanitizeMiddleware = require('./middlewares/sanitize');
 const app = express();
 
-app.set("trust proxy", true); // Trust the first proxy (e.g., if behind a load balancer)
+app.set("trust proxy", 1); // Trust the first proxy (e.g., if behind a load balancer)
 
 // ---------- Security & Core Middlewares ----------
 app.use(helmet());
