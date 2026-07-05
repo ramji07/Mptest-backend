@@ -18,6 +18,12 @@ const {
 } = require('../validators/authValidator');
 
 // ---------- Signup (OTP-based) ----------
+router.get('/signup', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Use POST /api/auth/signup with name, email, password, and confirmPassword to register.',
+  });
+});
 router.post('/signup', authLimiter, signupValidator, validateRequest, authController.signup);
 router.post(
   '/verify-signup-otp',

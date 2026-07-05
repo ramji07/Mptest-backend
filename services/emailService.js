@@ -9,9 +9,11 @@ const AppError = require('../utils/appError');
  * (controllers/services) can roll back or respond appropriately.
  */
 const sendOtpEmail = async ({ to, name, otp, purpose, expiryMinutes = process.env.OTP_EXPIRY_MINUTES }) => {
+  // Choose a subject line based on whether this email is for signup verification or password reset.
   const subject =
     purpose === 'reset_password' ? 'MPTest - Password Reset Code' : 'MPTest - Email Verification Code';
 
+  // Build the HTML email body using the OTP template.
   const html = otpEmailTemplate({ name, otp, purpose, expiryMinutes });
 
   try {

@@ -16,15 +16,19 @@ const Otp = require('../models/Otp');
  * @access  Public
  */
 const signup = asyncHandler(async (req, res) => {
+  // Collect the registration details entered by the user.
   const { name, email, password } = req.body;
 
+  // Check whether the submitted email is already registered.
   const emailTaken = await authService.isEmailTaken(email);
   if (emailTaken) {
     throw new AppError('An account with this email already exists', 409);
   }
 
+  // Hash the password before keeping it temporarily for verification.
   const hashedPassword = await authService.hashPassword(password);
 
+  // Save a temporary signup record and send the verification email.
   await otpService.createAndSendOtp({
     email,
     purpose: OTP_PURPOSES.SIGNUP,
@@ -36,7 +40,7 @@ const signup = asyncHandler(async (req, res) => {
   return sendResponse(res, {
     statusCode: HTTP_STATUS.OK,
     success: true,
-    message: 'OTP sent successfully',
+    message: 'Signup details saved successfully. Please verify your email.',
     data: { email: email.toLowerCase().trim() },
   });
 });
@@ -48,8 +52,10 @@ const signup = asyncHandler(async (req, res) => {
  * @access  Public
  */
 const verifySignupOtp = asyncHandler(async (req, res) => {
+  // Read the email and OTP submitted for verification.
   const { email, otp } = req.body;
 
+  // Validate the email verification code before creating the account.
   const otpDoc = await otpService.verifyOtp({ email, otp, purpose: OTP_PURPOSES.SIGNUP });
 
   if (!otpDoc.tempSignupData?.name || !otpDoc.hashedPassword) {
@@ -63,12 +69,14 @@ const verifySignupOtp = asyncHandler(async (req, res) => {
     throw new AppError('An account with this email already exists', 409);
   }
 
+  // Save the verified user data to the database.
   const user = await authService.createLocalUser({
     name: otpDoc.tempSignupData.name,
     email: otpDoc.email,
     hashedPassword: otpDoc.hashedPassword,
   });
 
+  // Remove the temporary OTP record after the record is saved.
   await otpService.deleteOtp(otpDoc._id);
 
   const token = generateToken(user._id);
@@ -76,7 +84,7 @@ const verifySignupOtp = asyncHandler(async (req, res) => {
   return sendResponse(res, {
     statusCode: HTTP_STATUS.CREATED,
     success: true,
-    message: 'Account verified and created successfully',
+    message: 'Account created successfully. You can now log in.',
     data: { user },
     token,
   });

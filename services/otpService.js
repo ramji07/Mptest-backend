@@ -18,13 +18,15 @@ const { OTP_PURPOSES } = require('../constants');
  * @param {string} [params.hashedPassword] - pre-hashed password for signup flow
  */
 const createAndSendOtp = async ({ email, purpose, name, tempSignupData, hashedPassword }) => {
+  // Normalize the email and generate a fresh verification code.
   const normalizedEmail = email.toLowerCase().trim();
   const rawOtp = generateOtp();
   const expiresAt = new Date(Date.now() + process.env.OTP_EXPIRY_MINUTES * 60 * 1000);
 
-  // Remove any existing OTP for this email + purpose so only one is ever active
+  // Remove any existing OTP for this email + purpose so only one is ever active.
   await Otp.deleteMany({ email: normalizedEmail, purpose });
 
+  // Store the hashed OTP and any temporary signup data for later verification.
   const otpDoc = new Otp({
     email: normalizedEmail,
     otp: rawOtp, // will be hashed by the pre-save hook
@@ -34,8 +36,10 @@ const createAndSendOtp = async ({ email, purpose, name, tempSignupData, hashedPa
     hashedPassword: purpose === OTP_PURPOSES.SIGNUP ? hashedPassword : undefined,
   });
 
+  // Save the OTP document so the verification step can use it later.
   await otpDoc.save();
 
+  // Send the verification code to the user's email.
   await sendOtpEmail({
     to: normalizedEmail,
     name: name || tempSignupData?.name || 'there',
@@ -53,8 +57,10 @@ const createAndSendOtp = async ({ email, purpose, name, tempSignupData, hashedPa
  * on success, or throws an AppError on any failure.
  */
 const verifyOtp = async ({ email, otp, purpose }) => {
+  // Normalize the submitted email before checking the stored OTP record.
   const normalizedEmail = email.toLowerCase().trim();
 
+  // Find the pending OTP record for this email and purpose.
   const otpDoc = await Otp.findOne({ email: normalizedEmail, purpose }).select(
     '+otp +hashedPassword +resetToken'
   );
@@ -63,11 +69,13 @@ const verifyOtp = async ({ email, otp, purpose }) => {
     throw new AppError('OTP not found or already used. Please request a new one.', 400);
   }
 
+  // Reject expired verification codes and remove them from the database.
   if (otpDoc.expiresAt.getTime() < Date.now()) {
     await Otp.deleteOne({ _id: otpDoc._id });
     throw new AppError('OTP has expired. Please request a new one.', 400);
   }
 
+  // Compare the submitted code with the hashed value stored in the database.
   const isMatch = await otpDoc.compareOtp(otp);
   if (!isMatch) {
     throw new AppError('Invalid OTP. Please try again.', 400);
