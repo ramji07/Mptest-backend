@@ -1,5 +1,5 @@
-const crypto = require('crypto');
 require("dotenv").config();
+const crypto = require('crypto');
 
 /**
  * Generates a numeric OTP of configurable length (default 6 digits)
