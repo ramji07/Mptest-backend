@@ -7,7 +7,7 @@ require("dotenv").config();
  */
 const connectDB = async () => {
   try {
-    mongoose.set('strictQuery', true);
+    // console.log(process.env.MONGO_URI);
 
     const conn = await mongoose.connect(process.env.MONGO_URI);
 
@@ -16,6 +16,9 @@ const connectDB = async () => {
     mongoose.connection.on('error', (err) => {
       console.error(`[DB] Connection error: ${err.message}`);
     });
+
+
+    
 
     mongoose.connection.on('disconnected', () => {
       console.warn('[DB] MongoDB disconnected');

@@ -1,10 +1,11 @@
 require("dotenv").config();
 const connectDB = require('./config/db');
 
+const app = require('./app');
 const transporter = require("./config/nodemailer");
 
-app.set("trust proxy", true);
-const app = require('./app');
+// const dns = require("dns");
+
 
 
 const startServer = async () => {
@@ -31,21 +32,20 @@ const startServer = async () => {
   });
 };
 
+
+// console.log("Node:", process.version);
+// console.log("MONGO_URI:", process.env.MONGO_URI);
+// console.log("PORT:", process.env.PORT);
+
+
+// dns.resolveSrv("_mongodb._tcp.cluster0.9ns0ku6.mongodb.net", (err, addresses) => {
+//   if (err) {
+//     console.error(err);
+//   } else {
+//     console.log(addresses);
+//   }
+// });
+
 startServer();
 
 
-app.get("/test-mail", async (req, res) => {
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: "ramjee.node@example.com",
-      subject: "Test Email",
-      text: "Hello server is started and nodemailer is working fine.",
-    });
-
-    res.send("Email Sent");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Email Failed");
-  }
-});
